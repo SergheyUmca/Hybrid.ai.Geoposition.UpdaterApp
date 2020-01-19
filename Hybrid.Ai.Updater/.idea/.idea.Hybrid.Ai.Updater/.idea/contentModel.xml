@@ -3,6 +3,8 @@
   <component name="ContentModelStore">
     <e p="C:\Home\TestsTasks\Hybrid.Ai.Updater\Hybrid.Ai.Updater" t="IncludeFlat">
       <e p="Hybrid.Ai.Updater.App" t="IncludeRecursive">
+        <e p="appsettings.json" t="Include" />
+        <e p="AutoFacDependencies.cs" t="Include" />
         <e p="bin" t="ExcludeRecursive" />
         <e p="Hybrid.Ai.Updater.App.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
@@ -12,12 +14,50 @@
             </e>
           </e>
         </e>
-        <e p="Program.cs" t="Include" />
+        <e p="Updater.cs" t="Include" />
+      </e>
+      <e p="Hybrid.Ai.Updater.BLL" t="IncludeRecursive">
+        <e p="bin" t="ExcludeRecursive" />
+        <e p="Handlers" t="Include">
+          <e p="Implementation" t="Include">
+            <e p="GeoDb.cs" t="Include" />
+          </e>
+          <e p="Interfaces" t="Include">
+            <e p="IGeoDb.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Hybrid.Ai.Updater.BLL.csproj" t="IncludeRecursive" />
+        <e p="obj" t="ExcludeRecursive">
+          <e p="Debug" t="Include">
+            <e p="netcoreapp2.2" t="Include">
+              <e p="Hybrid.Ai.Updater.BLL.AssemblyInfo.cs" t="Include" />
+            </e>
+          </e>
+        </e>
+        <e p="Services" t="Include">
+          <e p="ArchiveService.cs" t="Include" />
+          <e p="FileService.cs" t="Include" />
+        </e>
       </e>
       <e p="Hybrid.Ai.Updater.Common" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="Class1.cs" t="Include" />
         <e p="Hybrid.Ai.Updater.Common.csproj" t="IncludeRecursive" />
+        <e p="Models" t="Include">
+          <e p="BaseModels" t="Include">
+            <e p="Exceptions.cs" t="Include" />
+            <e p="Response.cs" t="Include" />
+            <e p="ResponseCodes.cs" t="Include" />
+          </e>
+          <e p="Constants" t="Include">
+            <e p="ErrorMessages.cs" t="Include" />
+          </e>
+          <e p="ResponseModels" t="Include">
+            <e p="GeoPosition.cs" t="Include" />
+          </e>
+          <e p="ServicesModels" t="Include">
+            <e p="CsvParseGeoLite2.cs" t="Include" />
+          </e>
+        </e>
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.2" t="Include">
@@ -28,13 +68,35 @@
       </e>
       <e p="Hybrid.Ai.Updater.DAL" t="IncludeRecursive">
         <e p="bin" t="ExcludeRecursive" />
-        <e p="Class1.cs" t="Include" />
+        <e p="Context" t="Include">
+          <e p="BaseContext.cs" t="Include" />
+        </e>
+        <e p="Entities" t="Include">
+          <e p="IpV4GeoLiteHistoryEntity.cs" t="Include" />
+          <e p="IpV4GeoLiteInfromationEntity.cs" t="Include" />
+        </e>
         <e p="Hybrid.Ai.Updater.DAL.csproj" t="IncludeRecursive" />
         <e p="obj" t="ExcludeRecursive">
           <e p="Debug" t="Include">
             <e p="netcoreapp2.2" t="Include">
               <e p="Hybrid.Ai.Updater.DAL.AssemblyInfo.cs" t="Include" />
             </e>
+          </e>
+        </e>
+        <e p="Repositories" t="Include">
+          <e p="Implementation" t="Include">
+            <e p="GeoLite.cs" t="Include" />
+          </e>
+          <e p="Interfaces" t="Include">
+            <e p="IGeoLite.cs" t="Include" />
+          </e>
+        </e>
+        <e p="Services" t="Include">
+          <e p="Implementation" t="Include">
+            <e p="DbService.cs" t="Include" />
+          </e>
+          <e p="Interfaces" t="Include">
+            <e p="IDbService.cs" t="Include" />
           </e>
         </e>
       </e>
