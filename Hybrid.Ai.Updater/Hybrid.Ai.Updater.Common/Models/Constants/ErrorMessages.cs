@@ -1,4 +1,4 @@
-﻿namespace Hybrid.ai.Geoposition.Common.Models.Constants
+﻿namespace Hybrid.Ai.Updater.Common.Models.Constants
 {
    public static class ErrorMessages
     {
@@ -23,6 +23,8 @@
         public const string LoginFailureErrorMessage = "Login failure.";
 
         public const string EmptyIpAddressHaveBeenPassedErrorMessage = "Empty IP address have been passed.";
-        
+
+        public const string AppSettingsCorrupted = "Setting file is corrupted";
+
     }
 }

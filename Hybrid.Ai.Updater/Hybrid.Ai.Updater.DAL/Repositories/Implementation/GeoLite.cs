@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using ObjectCloner.Extensions;
 using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response;
 using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response.AppResponse;
-using static Hybrid.ai.Geoposition.Common.Models.Constants.ErrorMessages;
+using static Hybrid.Ai.Updater.Common.Models.Constants.ErrorMessages;
 
 namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
 {

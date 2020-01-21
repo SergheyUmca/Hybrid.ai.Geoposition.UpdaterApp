@@ -7,6 +7,7 @@
 
     <ItemGroup>
       <PackageReference Include="Autofac" Version="4.9.4" />
+      <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="5.0.1" />
       <PackageReference Include="Microsoft.Extensions.Configuration" Version="3.1.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="3.1.0" />
       <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="2.2.0" />
@@ -23,6 +24,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Hybrid.Ai.Updater.BLL\Hybrid.Ai.Updater.BLL.csproj" />
       <ProjectReference Include="..\Hybrid.Ai.Updater.DAL\Hybrid.Ai.Updater.DAL.csproj" />
     </ItemGroup>
 

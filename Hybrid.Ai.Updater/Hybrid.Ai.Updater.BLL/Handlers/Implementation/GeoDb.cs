@@ -2,14 +2,13 @@
 using System.Linq;
 using System.Threading.Tasks;
 using Hybrid.ai.Geoposition.Common.Models.BaseModels;
-using Hybrid.ai.Geoposition.Common.Models.Constants;
 using Hybrid.Ai.Updater.BLL.Handlers.Interfaces;
 using Hybrid.Ai.Updater.BLL.Services;
+using Hybrid.Ai.Updater.Common.Models.Constants;
 using Hybrid.Ai.Updater.DAL.Context;
 using Hybrid.Ai.Updater.DAL.Services.Implementation;
 using Hybrid.Ai.Updater.DAL.Services.Interfaces;
 using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response.AppResponse;
-using Response = Hybrid.ai.Geoposition.Common.Models.BaseModels.Response;
 
 namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
 {
@@ -38,12 +37,12 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
             }
         }
 
-        public async Task<Response<bool>> GetDbFile()
+        public async Task<Response<bool>> GetDbFile(string dbAddress, string hashAddress, string path, string fileName)
         {
             var vResult = new Response<bool>(false);
             try
             {
-                var getLastHash = await FileService.GetHash("");
+                var getLastHash = await FileService.GetHash(hashAddress);
                 using (IDbService dbService = new DbService(_db).DbServiceInstance)
                 {
                     var checkStoredHash = await dbService.GeoLite.CheckHash(getLastHash);
@@ -55,7 +54,7 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
 
                     if (!checkStoredHash.Data)
                     {
-                        var getLastDates = await FileService.SaveFile("", "", "");
+                        var getLastDates = await FileService.SaveFile(path, fileName, dbAddress);
                         if (getLastDates)
                         {
                             vResult.Data = true;
@@ -76,18 +75,25 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
             return vResult;
         }
 
-        public async Task<Response<bool>> UpdateDb()
+        public async Task<Response<bool>> UpdateDb(string dbAddress, string hashAddress, string path, string fileName)
         {
             var vResult = new Response<bool>(false);
             try
             {
-                var getDbFile = await GetDbFile();
+                var getDbFile = await GetDbFile( dbAddress, hashAddress,  path,  fileName);
                 if (!getDbFile.Data)
                 {
                     throw new CustomException(ResponseCodes.FILE_NOT_SAVED, ErrorMessages.FileIsCorruptErrorMessage);
                 }
+
+                var parseFile = await FileService.ParseCsvDbFile();
+                if (parseFile == null || parseFile.Count == 0)
+                {
+                    throw new CustomException(ResponseCodes.FAILURE, ErrorMessages.FileIsCorruptErrorMessage);
+                }
                 
-                    
+                
+
             }
             catch (CustomException ce)
             {
