@@ -94,7 +94,7 @@ namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
             try
             {
                 var result = await _db.IpV4GeoLiteHistoryEntities.Where(w => w.Md5Sum.Equals(md5Hash) && w.Actualize)
-                    .FirstOrDefaultAsync().ShallowClone();
+                    .FirstOrDefaultAsync();
 
                 var updateCheckInfo = result != null;
                 if (updateCheckInfo)

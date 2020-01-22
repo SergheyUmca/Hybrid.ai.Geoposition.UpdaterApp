@@ -7,6 +7,7 @@ namespace Hybrid.Ai.Updater.DAL.Entities
     [Table("ipv4_information_geo_lite2", Schema = "dbo")]
     public class IpV4GeoLiteInformationEntity
     {
+        [Column("key")]
         public Guid Key { get; set; }
         
         [Column("autonomous_system_number")]

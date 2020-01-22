@@ -7,7 +7,9 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Interfaces
     {
         Task<Response<string>> GetDbInfo();
 
-        Task<Response<bool>> GetDbFile(string dbAddress, string hashAddress, string path, string fileName);
+        Task<Response<bool>> CheckForUpdates(string hashAddress);
+
+        Task<Response<byte[]>> GetDbFile(string dbAddress, string fileName);
         
         Task<Response<bool>> UpdateDb(string dbAddress, string hashAddress, string path, string fileName);
     }

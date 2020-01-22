@@ -37,9 +37,9 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
             }
         }
 
-        public async Task<Response<bool>> GetDbFile(string dbAddress, string hashAddress, string path, string fileName)
+
+        public async Task<Response<bool>> CheckForUpdates(string hashAddress)
         {
-            var vResult = new Response<bool>(false);
             try
             {
                 var getLastHash = await FileService.GetHash(hashAddress);
@@ -52,15 +52,37 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
                             checkStoredHash.Errors.FirstOrDefault()?.ResultMessage);
                     }
 
-                    if (!checkStoredHash.Data)
-                    {
-                        var getLastDates = await FileService.SaveFile(path, fileName, dbAddress);
-                        if (getLastDates)
-                        {
-                            vResult.Data = true;
-                        }
-                    }
+                    return new Response<bool>(checkStoredHash.Data);
                 }
+            }
+            catch (CustomException ce)
+            {
+                Console.WriteLine(ce.Errors.FirstOrDefault()?.ResultMessage);
+                throw;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
+        }
+        
+        
+        public async Task<Response<byte[]>> GetDbFile(string dbAddress/*,  string path*/ ,string fileName)
+        {
+            var vResult = new Response<byte[]>();
+            try
+            {
+                var getLastDates = await FileService.DownloadDbFile(dbAddress);
+                if (getLastDates.Length == 0)
+                {
+                    vResult.Data = getLastDates;
+                    return vResult;
+                }
+
+                var unzipArchive = await ArchiveService.GetCsvFileFromZip(getLastDates, fileName);
+                vResult.Data = unzipArchive;
+                return vResult;
             }
             catch (CustomException ce)
             {
@@ -80,20 +102,17 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
             var vResult = new Response<bool>(false);
             try
             {
-                var getDbFile = await GetDbFile( dbAddress, hashAddress,  path,  fileName);
-                if (!getDbFile.Data)
+                var getDbFile = await GetDbFile( dbAddress, fileName);
+                if (getDbFile.Data.Length == 0)
                 {
                     throw new CustomException(ResponseCodes.FILE_NOT_SAVED, ErrorMessages.FileIsCorruptErrorMessage);
                 }
 
-                var parseFile = await FileService.ParseCsvDbFile();
+                var parseFile = await FileService.ParseCsvDbFile(getDbFile.Data);
                 if (parseFile == null || parseFile.Count == 0)
                 {
                     throw new CustomException(ResponseCodes.FAILURE, ErrorMessages.FileIsCorruptErrorMessage);
                 }
-                
-                
-
             }
             catch (CustomException ce)
             {
