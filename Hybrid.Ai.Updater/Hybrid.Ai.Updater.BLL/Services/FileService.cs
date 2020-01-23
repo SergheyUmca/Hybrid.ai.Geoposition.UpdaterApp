@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
 using Hybrid.Ai.Updater.Common.Models.ServicesModels;
+using LukeSkywalker.IPNetwork;
 
 namespace Hybrid.Ai.Updater.BLL.Services
 {
@@ -50,16 +51,8 @@ namespace Hybrid.Ai.Updater.BLL.Services
            
         }
 
-        public sealed class CsvParseGeoLite2Map : ClassMap<CsvParseGeoLite2>
-        {
-            public CsvParseGeoLite2Map()
-            {
-                Map(m => m.Network).Name("network");
-                Map(m => m.AutonomousSystemNumber).Name("autonomous_system_number");
-                Map(m => m.AutonomousSystemOrganization).Name("autonomous_system_organization");
-            }
-        }
-        public static async Task<List<CsvParseGeoLite2>> ParseCsvDbFile( byte[] csvBody)
+     
+        public static List<CsvParseGeoLite2> ParseCsvDbFile( byte[] csvBody)
         {
 
             TextReader reader = new StreamReader(new MemoryStream(csvBody));
@@ -70,5 +63,6 @@ namespace Hybrid.Ai.Updater.BLL.Services
             
             return records;
         }
+        
     }
 }

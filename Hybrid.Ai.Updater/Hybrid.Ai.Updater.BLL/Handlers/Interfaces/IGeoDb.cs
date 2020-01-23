@@ -5,12 +5,10 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Interfaces
 {
     public interface IGeoDb
     {
-        Task<Response<string>> GetDbInfo();
-
-        Task<Response<bool>> CheckForUpdates(string hashAddress);
+        Task<Response<string>> CheckForUpdates(string hashAddress);
 
         Task<Response<byte[]>> GetDbFile(string dbAddress, string fileName);
         
-        Task<Response<bool>> UpdateDb(string dbAddress, string hashAddress, string path, string fileName);
+        Task<Response<bool>> UpdateDb(string dbAddress, string hashAddress, string fileName);
     }
 }

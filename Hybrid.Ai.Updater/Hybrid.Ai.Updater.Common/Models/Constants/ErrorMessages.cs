@@ -26,5 +26,7 @@
 
         public const string AppSettingsCorrupted = "Setting file is corrupted";
 
+        public const string DataBaseNoNeedUpdate = "No need update Database";
+
     }
 }

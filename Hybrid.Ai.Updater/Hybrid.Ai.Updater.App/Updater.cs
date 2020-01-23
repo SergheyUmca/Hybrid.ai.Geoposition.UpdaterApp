@@ -1,8 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using Autofac;
-using Autofac.Extensions.DependencyInjection;
+using Hybrid.Ai.Updater.App.Models;
 using Hybrid.Ai.Updater.BLL.Handlers.Implementation;
 using Hybrid.Ai.Updater.BLL.Handlers.Interfaces;
 using Hybrid.Ai.Updater.Common.Models.Constants;
@@ -16,43 +15,35 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Hybrid.Ai.Updater.App
 {
-    public class Updater
+    public static class Updater
     {
         private static IConfiguration _configuration;
         private static IServiceProvider _serviceProvider;
 
-        private static void Main(string[] args)
+        private static void Main()
         {
             ConfigureServices();
 
-            var vGeoIpSection = _configuration.GetSection("MaxMindGeoIp").GetChildren().ToList();
+            var vGeoIpSection = _configuration.GetSection("MaxMindGeoIp").Get<GeoIpConfigModel>();
 
-            var vRemoteAddressPrefix = vGeoIpSection.FirstOrDefault(f => f.Key.Equals("addressForUpdate"))?.Value;
-            var vLicenseKey = vGeoIpSection.FirstOrDefault(f => f.Key.Equals("LicenseKey"))?.Value;
-            var vEditionId =  vGeoIpSection.FirstOrDefault(f => f.Key.Equals("edition_id"))?.Value;
-            var vSuffixZip =  vGeoIpSection.FirstOrDefault(f => f.Key.Equals("suffixZip"))?.Value;
-            var vSuffixMd5 =  vGeoIpSection.FirstOrDefault(f => f.Key.Equals("suffixMd5"))?.Value;
-            var vFileName = vGeoIpSection.FirstOrDefault(f => f.Key.Equals("CsvName"))?.Value;
-
-            if (string.IsNullOrEmpty(vRemoteAddressPrefix) || string.IsNullOrEmpty(vLicenseKey)
-                                                           || string.IsNullOrEmpty(vEditionId) ||
-                                                           string.IsNullOrEmpty(vSuffixZip)
-                                                           || string.IsNullOrEmpty(vSuffixMd5) ||
-                                                           string.IsNullOrEmpty(vFileName))
+            if (!vGeoIpSection.IsOk)
             {
                 Console.WriteLine(ErrorMessages.AppSettingsCorrupted);
                 return;
             }
 
             var vRemoteDbAddress =
-                $"{vRemoteAddressPrefix}?edition_id={vEditionId}&license_key={vLicenseKey}&suffix={vSuffixZip}";
+                $"{vGeoIpSection.AddressForUpdate}?edition_id={vGeoIpSection.EditionId}&license_key={vGeoIpSection.LicenseKey}&suffix={vGeoIpSection.SuffixZip}";
             
             var vRemoteHashAddress =
-                $"{vRemoteAddressPrefix}?edition_id={vEditionId}&license_key={vLicenseKey}&suffix={vSuffixMd5}";
+                $"{vGeoIpSection.AddressForUpdate}?edition_id={vGeoIpSection.EditionId}&license_key={vGeoIpSection.LicenseKey}&suffix={vGeoIpSection.SuffixMd5}";
 
             var handler = _serviceProvider.GetService<IGeoDb>();
-            var gedFile =  handler.UpdateDb(vRemoteDbAddress, vRemoteHashAddress, Directory.GetCurrentDirectory(), vFileName).Result;
-            Console.WriteLine($" Hello {_configuration["version"]} !");
+            var updateDb =  handler.UpdateDb(vRemoteDbAddress, vRemoteHashAddress, vGeoIpSection.CsvName).Result;
+            if (updateDb.Data)
+            {
+                Console.WriteLine("Database successfully updated");
+            }
         }
 
        // private 

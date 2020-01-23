@@ -13,6 +13,7 @@ namespace Hybrid.Ai.Updater.Common.Models.ServicesModels
         public string Ip { get; set; }
     }
 
+    
     public class CsvParseGeoLite2
     {
         public int AutonomousSystemNumber { get; set; }
