@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using Hybrid.Ai.Updater.App.Models;
 using Hybrid.Ai.Updater.BLL.Handlers.Implementation;
 using Hybrid.Ai.Updater.BLL.Handlers.Interfaces;
@@ -40,10 +39,8 @@ namespace Hybrid.Ai.Updater.App
 
             var handler = _serviceProvider.GetService<IGeoDb>();
             var updateDb =  handler.UpdateDb(vRemoteDbAddress, vRemoteHashAddress, vGeoIpSection.CsvName).Result;
-            if (updateDb.Data)
-            {
+            if (updateDb.Data) 
                 Console.WriteLine("Database successfully updated");
-            }
         }
 
        // private 
