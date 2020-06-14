@@ -90,21 +90,16 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
                 var getLastHash = await CheckForUpdates( hashAddress);
                 if (string.IsNullOrEmpty(getLastHash.Data))
                 {
-                    throw new CustomException(ResponseCodes.LAST_UPDATES_ALREADY_EXISTS, ErrorMessages.DataBaseNoNeedUpdate);
-                }
-                
-                var getDbFile = await GetDbFile( dbAddress, fileName);
-                if (getDbFile.Data.Length == 0)
-                {
-                    throw new CustomException(ResponseCodes.FILE_NOT_SAVED, ErrorMessages.FileIsCorruptErrorMessage);
+                    throw new CustomException(ResponseCodes.LAST_UPDATES_ALREADY_EXISTS,
+                        ErrorMessages.DataBaseNoNeedUpdate);
                 }
 
+                var getDbFile = await GetDbFile( dbAddress, fileName);
+                if (getDbFile.Data.Length == 0) throw new CustomException(ResponseCodes.FILE_NOT_SAVED, ErrorMessages.FileIsCorruptErrorMessage);
+
                 var parseFile =  FileService.ParseCsvDbFile(getDbFile.Data);
-                if (parseFile == null || parseFile.Count == 0)
-                {
-                    throw new CustomException(ResponseCodes.FAILURE, ErrorMessages.FileIsCorruptErrorMessage);
-                }
-                
+                if (parseFile == null || parseFile.Count == 0) throw new CustomException(ResponseCodes.FAILURE, ErrorMessages.FileIsCorruptErrorMessage);
+
                 using (IDbService dbService = new DbService(_db).DbServiceInstance)
                 {
                     var datesForSave = parseFile.Select(s => new IpV4GeoLiteInformationEntity

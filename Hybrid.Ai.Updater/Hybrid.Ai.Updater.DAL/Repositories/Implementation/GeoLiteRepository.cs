@@ -134,7 +134,8 @@ namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
             }
         }
         
-        public async Task<Response<Dictionary<Guid, IpV4GeoLiteInformationEntity>>> CreateRange(List<IpV4GeoLiteInformationEntity> directoryEntitiesList)
+        public async Task<Response<Dictionary<Guid, IpV4GeoLiteInformationEntity>>> CreateRange(
+            List<IpV4GeoLiteInformationEntity> directoryEntitiesList)
         {
             try
             {
