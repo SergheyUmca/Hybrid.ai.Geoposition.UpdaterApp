@@ -1,4 +1,4 @@
-﻿namespace Hybrid.ai.Geoposition.Common.Models.ResponseModel
+﻿namespace Hybrid.Ai.Updater.App.Models.ResponseModels
 {
     public abstract class GeoPosition
     {

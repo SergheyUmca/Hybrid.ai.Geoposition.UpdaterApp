@@ -8,6 +8,6 @@ namespace Hybrid.Ai.Updater.DAL.Services.Interfaces
     {
         DbService DbServiceInstance { get; }
         
-        IGeoLite GeoLite { get; }
+        IGeoLiteRepository GeoLite { get; }
     }
 }

@@ -1,6 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿
 
-namespace Hybrid.Ai.Updater.Common.Models.ServicesModels
+namespace Hybrid.Ai.Updater.BLL.ServicesModels
 {
     public class GeoLiteIpModel
     {

@@ -1,7 +1,7 @@
 ﻿﻿using CsvHelper.Configuration;
-using Hybrid.Ai.Updater.Common.Models.ServicesModels;
+ using Hybrid.Ai.Updater.BLL.ServicesModels;
 
-namespace Hybrid.Ai.Updater.BLL.Services
+ namespace Hybrid.Ai.Updater.BLL.Services
 {
     public sealed class CsvParseGeoLite2Map : ClassMap<CsvParseGeoLite2>
     {

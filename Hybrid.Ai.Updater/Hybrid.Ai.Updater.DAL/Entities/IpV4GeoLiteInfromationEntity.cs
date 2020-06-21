@@ -19,7 +19,37 @@ namespace Hybrid.Ai.Updater.DAL.Entities
         [Column("md5_sum"), MaxLength(32)]
         public string Md5Sum { get; set; }
         
+        [Column("history_key")]
+        public Guid HistoryKey { get; set; }
+        
         [Column("network"), MaxLength(50)]
         public string Network { get; set; }
+        
+        [Column("cidr")]
+        public int Cidr { get; set; }
+        
+        [Column("min_first_segment")]
+        public int MinFirstSegment { get; set; }
+        
+        [Column("min_second_segment")]
+        public int MinSecondSegment { get; set; }
+        
+        [Column("min_third_segment")]
+        public int MinThirdSegment { get; set; }
+        
+        [Column("min_last_segment")]
+        public int MinLastSegment { get; set; }
+        
+        [Column("max_first_segment")]
+        public int MaxFirstSegment { get; set; }
+        
+        [Column("max_second_segment")]
+        public int MaxSecondSegment { get; set; }
+        
+        [Column("max_third_segment")]
+        public int MaxThirdSegment { get; set; }
+        
+        [Column("max_last_segment")]
+        public int MaxLastSegment { get; set; }
     }
 }

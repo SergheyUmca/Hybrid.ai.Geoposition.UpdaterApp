@@ -37,7 +37,7 @@ namespace Hybrid.Ai.Updater.App
             var vRemoteHashAddress =
                 $"{vGeoIpSection.AddressForUpdate}?edition_id={vGeoIpSection.EditionId}&license_key={vGeoIpSection.LicenseKey}&suffix={vGeoIpSection.SuffixMd5}";
 
-            var handler = _serviceProvider.GetService<IGeoDb>();
+            var handler = _serviceProvider.GetService<IGeoDbHandler>();
             var updateDb =  handler.UpdateDb(vRemoteDbAddress, vRemoteHashAddress, vGeoIpSection.CsvName).Result;
             if (updateDb.Data) 
                 Console.WriteLine("Database successfully updated");
@@ -57,7 +57,7 @@ namespace Hybrid.Ai.Updater.App
                     o => o.UseNpgsql(_configuration.GetConnectionString("DataAccessPostgreSqlProvider")),
                     ServiceLifetime.Transient)
                 .AddSingleton<IDbService, DbService>()
-                .AddSingleton<IGeoDb, GeoDb>()
+                .AddSingleton<IGeoDbHandler, GeoDbHandler>()
                 .BuildServiceProvider();
         }
     }

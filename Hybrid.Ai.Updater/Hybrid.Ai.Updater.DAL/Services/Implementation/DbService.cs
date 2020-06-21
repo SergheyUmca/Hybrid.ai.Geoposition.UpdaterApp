@@ -12,7 +12,7 @@ namespace Hybrid.Ai.Updater.DAL.Services.Implementation
         private readonly Lazy<DbService> _lazyDbService;
         private readonly object _locker = new object();
 
-        private IGeoLite _geoLite;
+        private IGeoLiteRepository _geoLite;
 
         public DbService(BaseContext db)
         {
@@ -27,7 +27,7 @@ namespace Hybrid.Ai.Updater.DAL.Services.Implementation
      
 
 
-        public IGeoLite GeoLite => _geoLite ?? (_geoLite = new GeoLite(_db));
+        public IGeoLiteRepository GeoLite => _geoLite ?? (_geoLite = new GeoLiteRepository(_db));
 
         public void Dispose()
         {

@@ -1,11 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response.AppResponse;
 
 namespace Hybrid.Ai.Updater.BLL.Handlers.Interfaces
 {
-    public interface IGeoDb
+    public interface IGeoDbHandler
     {
-        Task<Response<string>> CheckForUpdates(string hashAddress);
+        Task<Response<KeyValuePair<Guid, string>>> CheckForUpdates(string hashAddress);
 
         Task<Response<byte[]>> GetDbFile(string dbAddress, string fileName);
         

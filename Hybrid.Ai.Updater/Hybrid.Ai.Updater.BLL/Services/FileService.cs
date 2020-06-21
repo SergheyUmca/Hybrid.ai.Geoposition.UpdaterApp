@@ -6,8 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Hybrid.Ai.Updater.Common.Models.ServicesModels;
-using LukeSkywalker.IPNetwork;
+using Hybrid.Ai.Updater.BLL.ServicesModels;
 
 namespace Hybrid.Ai.Updater.BLL.Services
 {

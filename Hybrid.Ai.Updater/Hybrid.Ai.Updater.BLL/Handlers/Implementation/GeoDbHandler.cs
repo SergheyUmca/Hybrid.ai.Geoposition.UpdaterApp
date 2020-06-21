@@ -1,10 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Hybrid.ai.Geoposition.Common.Models.BaseModels;
 using Hybrid.Ai.Updater.BLL.Handlers.Interfaces;
 using Hybrid.Ai.Updater.BLL.Services;
 using Hybrid.Ai.Updater.Common.Models.Constants;
+using Hybrid.Ai.Updater.Common.Services;
 using Hybrid.Ai.Updater.DAL.Context;
 using Hybrid.Ai.Updater.DAL.Entities;
 using Hybrid.Ai.Updater.DAL.Services.Implementation;
@@ -13,17 +15,17 @@ using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response.AppResponse
 
 namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
 {
-    public class GeoDb : IGeoDb
+    public class GeoDbHandler : IGeoDbHandler
     {
         
         private readonly BaseContext _db;
 
-        public GeoDb(BaseContext context)
+        public GeoDbHandler(BaseContext context)
         {
             _db = context;
         }
         
-        public async Task<Response<string>> CheckForUpdates(string hashAddress)
+        public async Task<Response<KeyValuePair<Guid, string>>> CheckForUpdates(string hashAddress)
         {
             try
             {
@@ -37,7 +39,8 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
                             checkStoredHash.Errors.FirstOrDefault()?.ResultMessage);
                     }
 
-                    return new Response<string>(checkStoredHash.Data ? null : getLastHash);
+                    return new Response<KeyValuePair<Guid, string>>(checkStoredHash.Data != null ? new 
+                    KeyValuePair<Guid, string>((Guid)checkStoredHash.Data, getLastHash) : new KeyValuePair<Guid, string>());
                 }
             }
             catch (CustomException ce)
@@ -88,7 +91,7 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
             try
             {
                 var getLastHash = await CheckForUpdates( hashAddress);
-                if (string.IsNullOrEmpty(getLastHash.Data))
+                if (Equals(getLastHash.Data, new KeyValuePair<Guid,string>()))
                 {
                     throw new CustomException(ResponseCodes.LAST_UPDATES_ALREADY_EXISTS,
                         ErrorMessages.DataBaseNoNeedUpdate);
@@ -102,15 +105,31 @@ namespace Hybrid.Ai.Updater.BLL.Handlers.Implementation
                 if (parseFile == null || parseFile.Count == 0)
                     throw new CustomException(ResponseCodes.FAILURE, ErrorMessages.FileIsCorruptErrorMessage);
 
+                var convertNetmaskRange =
+                    NetMaskConverter.IpV4NetmaskRangeParse(parseFile.Select(s => s.Network).ToList());
+
                 using (IDbService dbService = new DbService(_db).DbServiceInstance)
                 {
-                    var datesForSave = parseFile.Select(s => new IpV4GeoLiteInformationEntity
-                    {
-                        Network = s.Network,
-                        AutonomousSystemNumber = s.AutonomousSystemNumber,
-                        AutonomousSystemOrganization = s.AutonomousSystemOrganization,
-                        Md5Sum = getLastHash.Data
-                    }).ToList();
+                    var datesForSave = convertNetmaskRange.
+                        Join(parseFile, ipRange => ipRange.NetMask, csv => csv.Network, (ipRange, csv) =>
+                            new IpV4GeoLiteInformationEntity
+                            {
+                                Network = ipRange.NetMask,
+                                Cidr = ipRange.Cidr,
+                                AutonomousSystemNumber = csv.AutonomousSystemNumber,
+                                AutonomousSystemOrganization = csv.AutonomousSystemOrganization,
+                                MinFirstSegment = ipRange.MinFirstSegment,
+                                MinSecondSegment = ipRange.MinSecondSegment,
+                                MinThirdSegment = ipRange.MinThirdSegment,
+                                MinLastSegment = ipRange.MinLastSegment,
+                                MaxFirstSegment = ipRange.MaxFirstSegment,
+                                MaxSecondSegment = ipRange.MaxSecondSegment,
+                                MaxThirdSegment = ipRange.MaxThirdSegment,
+                                MaxLastSegment = ipRange.MaxLastSegment,
+                                Md5Sum = getLastHash.Data.Value,
+                                HistoryKey = getLastHash.Data.Key
+                            }).ToList();
+                    
                     var checkStoredHash = await dbService.GeoLite.CreateRange(datesForSave);
                     if (checkStoredHash.ResultCode != ResponseCodes.SUCCESS)
                     {

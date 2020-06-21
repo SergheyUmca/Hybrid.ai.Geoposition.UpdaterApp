@@ -2,7 +2,7 @@
 using System.IO.Compression;
 using System.Threading.Tasks;
 
-namespace Hybrid.Ai.Updater.BLL.Services
+namespace Hybrid.Ai.Updater.Common.Services
 {
     public static class ArchiveService
     {
@@ -30,11 +30,12 @@ namespace Hybrid.Ai.Updater.BLL.Services
                 {
                     foreach (var entry in archive.Entries)
                     {
-                        if (entry.Name.EndsWith(csvName))
-                        {
-                            await entry.Open().CopyToAsync(vMemoryStream);
-                            return vMemoryStream.ToArray();
-                        }
+                        if (!entry.Name.EndsWith(csvName)) 
+                            continue;
+                        
+                        await entry.Open().CopyToAsync(vMemoryStream);
+                        
+                        return vMemoryStream.ToArray();
                     }
 
                     return null;

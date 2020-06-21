@@ -14,14 +14,13 @@ using static Hybrid.Ai.Updater.Common.Models.Constants.ErrorMessages;
 
 namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
 {
-    public class GeoLite : IGeoLite
+    public class GeoLiteRepository : IGeoLiteRepository
     {
         private readonly BaseContext _db;
         
-        public GeoLite(BaseContext context)
+        public GeoLiteRepository(BaseContext context)
         {
             _db = context;
-            
         }
         
         
@@ -88,9 +87,9 @@ namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
             }
         }
         
-        public async Task<Response<bool>> CheckHash(string md5Hash)
+        public async Task<Response<Guid?>> CheckHash(string md5Hash)
         {
-            var vResult = new Response<bool>();
+            var vResult = new Response<Guid?>();
             try
             {
                 var result = await _db.IpV4GeoLiteHistoryEntities.Where(w => w.Md5Sum.Equals(md5Hash) && w.Actualize)
@@ -109,47 +108,88 @@ namespace Hybrid.Ai.Updater.DAL.Repositories.Implementation
                 }
                 else
                 {
-                    await _db.IpV4GeoLiteHistoryEntities.AddAsync(new IpV4GeoLiteHistoryEntity
+                    var historyEntity = new IpV4GeoLiteHistoryEntity
                     {
+                        Key = Guid.NewGuid(),
                         Actualize = true,
                         LastCheckDate = DateTime.Now,
                         Md5Sum = md5Hash,
                         UpdateDate = DateTime.Now
-                    });
+                    };
+                    
+                    await _db.IpV4GeoLiteHistoryEntities.AddAsync(historyEntity);
                     await _db.SaveChangesAsync();
+                    
+                    vResult.Data = historyEntity.Key;
                 }
-
-                vResult.Data = updateCheckInfo;
                 
                 return vResult;
             }
             catch (CustomException e)
             {
-                return new ErrorResponse<bool>(e.Errors.FirstOrDefault()?.ResultMessage, ResponseCodes.DATABASE_ERROR);
+                return new ErrorResponse<Guid?>(e.Errors.FirstOrDefault()?.ResultMessage, ResponseCodes.DATABASE_ERROR);
             }
             catch (Exception e)
             {
                 var exceptionMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
-                return new ErrorResponse<bool>(exceptionMessage, ResponseCodes.DATABASE_ERROR);
+                return new ErrorResponse<Guid?>(exceptionMessage, ResponseCodes.DATABASE_ERROR);
             }
         }
-        
-        public async Task<Response<Dictionary<Guid, IpV4GeoLiteInformationEntity>>> CreateRange(
+
+        public async Task<Response<List<IpV4GeoLiteInformationEntity>>> CreateRange(
             List<IpV4GeoLiteInformationEntity> directoryEntitiesList)
         {
-            try
+            var clonedEntities = directoryEntitiesList.ShallowClone();
+            
+            var strategy = _db.Database.CreateExecutionStrategy();
+            await strategy.Execute(async () =>
             {
-                await _db.IpV4GeoLiteInfoEntities.AddRangeAsync(directoryEntitiesList);
-                await _db.SaveChangesAsync();
-                var keyList = directoryEntitiesList.ToDictionary(directoryEntity => directoryEntity.Key);
+                using (var transaction = _db.Database.BeginTransaction())
+                {
+                    // ReSharper disable once CollectionNeverQueried.Local
+                    var entitiesToBeCreated = new List<IpV4GeoLiteInformationEntity>();
+                    try
+                    {
+                        foreach (var entity in clonedEntities) 
+                            entity.Key = new Guid();
 
-                return new Response<Dictionary<Guid, IpV4GeoLiteInformationEntity>>(keyList.ShallowClone());
-            }
-            catch (Exception e)
-            {
-                var exceptionMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
-                return new ErrorResponse<Dictionary<Guid, IpV4GeoLiteInformationEntity>>(exceptionMessage, ResponseCodes.DATABASE_ERROR);
-            }
+                        entitiesToBeCreated.AddRange(clonedEntities.Select(entity => new IpV4GeoLiteInformationEntity
+                        {
+                            Key = entity.Key,
+                            Network = entity.Network,
+                            Md5Sum = entity.Md5Sum,
+                            HistoryKey = entity.HistoryKey,
+                            AutonomousSystemNumber = entity.AutonomousSystemNumber,
+                            AutonomousSystemOrganization = entity.AutonomousSystemOrganization,
+                            Cidr = entity.Cidr,
+                            MinFirstSegment = entity.MinFirstSegment,
+                            MinSecondSegment = entity.MinSecondSegment,
+                            MinThirdSegment = entity.MinThirdSegment,
+                            MinLastSegment = entity.MinLastSegment,
+                            MaxFirstSegment = entity.MaxFirstSegment,
+                            MaxSecondSegment = entity.MaxSecondSegment,
+                            MaxThirdSegment = entity.MaxThirdSegment,
+                            MaxLastSegment = entity.MaxLastSegment
+                        }));
+                        
+                        await _db.AddRangeAsync(entitiesToBeCreated);
+                        await _db.SaveChangesAsync();
+                        
+                        transaction.Commit();
+
+                        return new Response<List<IpV4GeoLiteInformationEntity>>(clonedEntities);
+                    }
+                    catch (Exception e)
+                    {
+                        transaction.Rollback();
+                        
+                        var exceptionMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
+                        return new ErrorResponse<List<IpV4GeoLiteInformationEntity>>(exceptionMessage,
+                            ResponseCodes.DATABASE_ERROR);
+                    }
+                }
+            });
+            return new Response<List<IpV4GeoLiteInformationEntity>>(clonedEntities);
         }
 
         public async Task<AppResponse.Response> Update(IpV4GeoLiteInformationEntity entity)
