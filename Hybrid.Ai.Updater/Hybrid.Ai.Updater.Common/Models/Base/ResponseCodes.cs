@@ -1,4 +1,4 @@
-﻿namespace Hybrid.ai.Geoposition.Common.Models.BaseModels
+﻿namespace Hybrid.Ai.Updater.Common.Models.Base
 {
     public enum ResponseCodes
     {

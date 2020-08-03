@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hybrid.Ai.Updater.DAL.Entities
+namespace Hybrid.Ai.Updater.DAL.Entities.GeoLite2
 {
-    [Table("ipv4_update_history_geo_lite2", Schema = "base")]
-    public class IpV4GeoLiteHistoryEntity
+    [Table("update_history", Schema = "geo_lite2")]
+    public class GeoLiteHistoryEntity
     {
         [Column("key")]
         public Guid Key { get; set; }

@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using Hybrid.Ai.Updater.App.Models;
-using Hybrid.Ai.Updater.BLL.Handlers.Implementation;
-using Hybrid.Ai.Updater.BLL.Handlers.Interfaces;
+using Hybrid.Ai.Updater.BLL.Handlers.Implementation.GeoLite2;
+using Hybrid.Ai.Updater.BLL.Handlers.Interfaces.GeoLite2;
+using Hybrid.Ai.Updater.BLL.Models.Enums;
 using Hybrid.Ai.Updater.Common.Models.Constants;
 using Hybrid.Ai.Updater.DAL.Context;
 using Hybrid.Ai.Updater.DAL.Services.Implementation;
@@ -37,8 +38,16 @@ namespace Hybrid.Ai.Updater.App
             var vRemoteHashAddress =
                 $"{vGeoIpSection.AddressForUpdate}?edition_id={vGeoIpSection.EditionId}&license_key={vGeoIpSection.LicenseKey}&suffix={vGeoIpSection.SuffixMd5}";
 
+            
+            Console.WriteLine("Please Chose type Db for Update 0)ASN 1) City");
+            if (!int.TryParse(Console.ReadLine(), out var sourceType))
+            {
+                Console.WriteLine(ErrorMessages.InvalidRequestDataErrorMessage);
+                return;
+            }
+            
             var handler = _serviceProvider.GetService<IGeoDbHandler>();
-            var updateDb =  handler.UpdateDb(vRemoteDbAddress, vRemoteHashAddress, vGeoIpSection.CsvName).Result;
+            var updateDb =  handler.UpdateDb((DataBaseTypes)sourceType).Result;
             if (updateDb.Data) 
                 Console.WriteLine("Database successfully updated");
         }

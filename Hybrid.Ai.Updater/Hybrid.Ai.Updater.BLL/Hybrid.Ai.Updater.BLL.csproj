@@ -15,4 +15,10 @@
       <ProjectReference Include="..\Hybrid.Ai.Updater.DAL\Hybrid.Ai.Updater.DAL.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Models\Common" />
+      <Folder Include="Models\Request" />
+      <Folder Include="Models\Response" />
+    </ItemGroup>
+
 </Project>

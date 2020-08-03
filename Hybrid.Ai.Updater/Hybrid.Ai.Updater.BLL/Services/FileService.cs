@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CsvHelper;
 using CsvHelper.Configuration;
-using Hybrid.Ai.Updater.BLL.ServicesModels;
+using Hybrid.Ai.Updater.BLL.Models.Service.GeoLite2;
 
 namespace Hybrid.Ai.Updater.BLL.Services
 {
@@ -51,14 +51,43 @@ namespace Hybrid.Ai.Updater.BLL.Services
         }
 
      
-        public static List<CsvParseGeoLite2> ParseCsvDbFile( byte[] csvBody)
+        public static List<CsvParserAsn> ParseCsvAsnDbFile( byte[] csvBody)
         {
 
             TextReader reader = new StreamReader(new MemoryStream(csvBody));
+            
             var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
-            csvConfig.RegisterClassMap<CsvParseGeoLite2Map>();
+            csvConfig.RegisterClassMap<CsvParseAsnMap>();
+            
             var csvReader = new CsvReader(reader, csvConfig);
-            var records =  csvReader.GetRecords<CsvParseGeoLite2>().ToList();
+            var records =  csvReader.GetRecords<CsvParserAsn>().ToList();
+            
+            return records;
+        }
+        
+        public static List<CsvParserCityLocations> ParseCsvCityLocationsDbFile( byte[] csvBody)
+        {
+            TextReader reader = new StreamReader(new MemoryStream(csvBody));
+            
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
+            csvConfig.RegisterClassMap<CsvParseCityLocationsMap>();
+            
+            var csvReader = new CsvReader(reader, csvConfig);
+            var records =  csvReader.GetRecords<CsvParserCityLocations>().ToList();
+            
+            return records;
+        }
+        
+        public static List<CsvParserCityBlocks> ParseCsvCityBlocksDbFile( byte[] csvBody)
+        {
+
+            TextReader reader = new StreamReader(new MemoryStream(csvBody));
+            
+            var csvConfig = new CsvConfiguration(CultureInfo.InvariantCulture);
+            csvConfig.RegisterClassMap<CsvParseCityMap>();
+            
+            var csvReader = new CsvReader(reader, csvConfig);
+            var records =  csvReader.GetRecords<CsvParserCityBlocks>().ToList();
             
             return records;
         }

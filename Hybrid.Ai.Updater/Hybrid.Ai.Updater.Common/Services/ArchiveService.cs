@@ -1,6 +1,8 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using Hybrid.Ai.Updater.Common.Models.Service;
 
 namespace Hybrid.Ai.Updater.Common.Services
 {
@@ -39,6 +41,31 @@ namespace Hybrid.Ai.Updater.Common.Services
                     }
 
                     return null;
+                }
+            }
+        }
+        
+        public static async Task<List<FileModel>> GetCsvFilesFromZip(byte[] zipBody)
+        {
+            var response = new List<FileModel>();
+            var vMemoryStream = new MemoryStream();
+            
+            using (var zipToOpen = new MemoryStream( zipBody))
+            {
+                using (var archive =  new ZipArchive(zipToOpen, ZipArchiveMode.Read))
+                {
+                    foreach (var entry in archive.Entries)
+                    {
+                        await entry.Open().CopyToAsync(vMemoryStream);
+                        
+                        response.Add(new FileModel
+                        {
+                            Name = entry.Name,
+                            Data = vMemoryStream.ToArray()
+                        });
+                    }
+
+                    return response;
                 }
             }
         }

@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using static Hybrid.ai.Geoposition.Common.Models.BaseModels.Response;
 
-namespace Hybrid.ai.Geoposition.Common.Models.BaseModels
+namespace Hybrid.Ai.Updater.Common.Models.Base
 {
     public class CustomException : Exception
     {

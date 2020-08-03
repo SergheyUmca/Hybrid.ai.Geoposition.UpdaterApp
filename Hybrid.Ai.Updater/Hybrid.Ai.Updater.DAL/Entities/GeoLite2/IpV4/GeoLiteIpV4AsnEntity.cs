@@ -2,10 +2,10 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Hybrid.Ai.Updater.DAL.Entities
+namespace Hybrid.Ai.Updater.DAL.Entities.GeoLite2.IpV4
 {
-    [Table("ipv4_information_geo_lite2", Schema = "base")]
-    public class IpV4GeoLiteInformationEntity
+    [Table("ipv4_ASN", Schema = "geo_lite2")]
+    public class GeoLiteIpV4AsnEntity
     {
         [Column("key")]
         public Guid Key { get; set; }

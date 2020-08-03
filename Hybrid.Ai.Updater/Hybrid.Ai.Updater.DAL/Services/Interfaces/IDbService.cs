@@ -1,5 +1,6 @@
 ﻿using System;
-using Hybrid.Ai.Updater.DAL.Repositories.Interfaces;
+using Hybrid.Ai.Updater.DAL.Repositories.Interfaces.GeoLite2;
+using Hybrid.Ai.Updater.DAL.Repositories.Interfaces.GeoLite2.IpV4;
 using Hybrid.Ai.Updater.DAL.Services.Implementation;
 
 namespace Hybrid.Ai.Updater.DAL.Services.Interfaces
@@ -8,6 +9,14 @@ namespace Hybrid.Ai.Updater.DAL.Services.Interfaces
     {
         DbService DbServiceInstance { get; }
         
-        IGeoLiteRepository GeoLite { get; }
+        IGeoLiteIpV4AsnRepository GeoLiteIpV4Asn { get; }
+        
+        IGeoLiteIpv4CityRepository GeoLiteIpv4City { get; }
+        
+        IGeoLiteGeoNameRepository GeoLiteGeoName { get; }
+        
+        IGeoLiteHistoryRepository GeoLiteHistory { get; }
+        
+        IGeoLiteLanguageRepository GeoLiteLanguage { get; }
     }
 }

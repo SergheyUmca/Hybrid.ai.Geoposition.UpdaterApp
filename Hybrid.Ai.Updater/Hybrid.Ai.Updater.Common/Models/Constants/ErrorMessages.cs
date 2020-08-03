@@ -28,5 +28,13 @@
 
         public const string DataBaseNoNeedUpdate = "No need update Database";
 
+        public const string WrongSourceType = "Data base type not valid";
+        
+        public const string BadExternalResponse = "External Connect is Failed";
+        
+        public const string InvalidRequestDataErrorMessage = "Invalid request data.";
+
+        public const string InsertNewRowsIntoDbErrorMessage = "Can't Insert New Rows Into Db.";
+
     }
 }
